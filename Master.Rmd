@@ -1,0 +1,125 @@
+---
+title: "MASTER"
+author: "Aida Amini""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#Einleitung und Fragestellung
+
+Dieses R Markdown Dokument beschäftigt sich mit der Fragestellung: „Wie entsteht politischer Diskurs in unpolitischen Kontexten auf der sozialen Netzwerkseite Instagram?“ 
+Im nachfolgenden Teil werden die Forschungsfragen und Hypothesen der Masterarbeit beantwortet. 
+
+Bevor mit der Analyse der Forschungsfrage und Hypothesen begonnen werden kann, müssen zunächst die notwendigen Pakete und der Datensatz geladen werden. Der Datensatz wird mit "Import Dataset" importiert. 
+
+```{r cars}
+#Laden der notwendigen Pakete:
+library(foreign)
+library(psych)
+library(car)
+library(plyr)
+library(haven)
+library(naniar)
+library(psych)
+library(dplyr)
+library(lm.beta)
+library(stats)
+
+#Laden des Datensatzes und Benennung in "ds":
+ds <-Datensatz_MA
+
+#Laden des Datensatzes für H2 und Benennung in "polar". (Der Datensatz für die H2 wurde wegen der Übersichtlichkeit ausgelagert.) 
+
+polar <-Datensatz2_MA
+
+```
+#Deskriptive Statistik 
+Obwohl sich viele deskriptive Statistiken über die Excel-Tabelle ablesen lassen, werden hier die restlichen Informationen ermittelt. 
+
+```{r}
+#Anzahl der verschiedenen Medien (Boomerang, Video, Foto) 
+table(ds$`V 1.5`)
+
+#Gesamtzahl der codierten Kommentare
+sum(ds$`401`, ds$`402`, ds$`403`, ds$`404`, ds$`405`, ds$`406`, ds$`407`, ds$`408`, ds$`409`, ds$`410`, ds$`411`)
+
+#Kommentarzahl
+summary(ds$`Anzahl der Kommentare`)
+sd(ds$`Anzahl der Kommentare`)
+
+#Politische Beiträge
+summary(polar$`Anzahl der politischen Beiträge pro Influencer`)
+```
+# Forschungsfragen
+```{r}
+#Inwiefern integrieren Influencer*innen politische Bildelemente in ihren Beiträgen auf Instagram?
+table(ds$`V 2.1`)
+
+#Welche politischen Themen werden von Influencer*innen angesprochen? 
+table(ds$`V 2.2`)
+
+#Inwiefern fordern Influencer*innen zum politischen Handeln auf?
+table(ds$`V 2.3`)
+
+#Von welchen Kommunikationsformen wird in den Kommentaren unter Beiträgen von Influencer*innen Gebrauch gemacht?
+
+sum(ds$`401`)
+sum(ds$`402`)
+sum(ds$`403`)
+sum(ds$`404`)
+sum(ds$`405`)
+sum(ds$`406`)
+sum(ds$`407`)
+sum(ds$`408`)
+sum(ds$`409`)
+sum(ds$`410`)
+sum(ds$`411`)
+
+```
+#Hypothese 1
+
+H1: Wenn eine politische Handlungsaufforderung formuliert wird, steigt die politische Partizipation in den Kommentaren.
+
+Um den Zusammenhang zwischen der politischen Handlungsaufforderung (UV="handlung") und der Partizipation in den Kommentaren (AV="kom_pro") zu ermitteln, wird im Folgenden eine lineare Regression durchgeführt. Dafür wurde im Vorfeld mithilfe einer Dummy-Codierung die Variable ("handlung") ermittelt und der prozentuale Anteil an Kommentaren errechnet. 
+
+```{r}
+#Mithilfe der Boxplot und Histogramm-Funktion werden zunächst mögliche Ausreißer ermittelt. 
+boxplot(ds$kom_pro)
+hist(ds$kom_pro)
+
+#Regressionsmodell 1
+m1 <- lm(kom_pro  ~ handlung, data = ds) 
+m1 <- lm.beta(m1)
+summary(m1)
+
+confint(m1,level = 0.95) #Konfidenzintervall
+
+#Da hier mit einer Dummy-Variable gerechnet wurde, kann keine Regressionsgerade gezeichnet werden. 
+
+```
+#Hypothese 2
+
+H2:Je mehr politische Beiträge auf Instagram gepostet werden, desto polarisierter sind die Diskussionen unter dem Beitrag.
+
+Um den Zusammenhang zwischen der Anzahl der politischen Beiträge (UV="anzahl_pro") und der Polarisierung in den Kommentaren (AV="pol_index")zu ermitteln, wird im Folgenden eine lineare Regression durchgeführt. Dafür wurde im Vorfeld mithilfe von Excel-Funktionen der Polariserungsindex ermittelt und der prozentuale Anteil der Beiträge errechnet. 
+
+```{r}
+#Mithilfe der Boxplot und Histogramm-Funktion werden zunächst mögliche Ausreißer ermittelt. Da der Datensatz zu klein ist, werden diese nicht entfernt. (Nähres dazu ist in der Forschungsarbeit vermerkt.)
+boxplot(polar$pol_index)
+boxplot(polar$anzahl_pro)
+hist(polar$pol_index)
+hist(polar$anzahl_pro)
+
+#Regressionsmodell 2
+m2 <- lm(pol_index ~ anzahl_pro, data = polar) 
+m2 <- lm.beta(m2)
+summary(m2)
+
+confint(m2,level = 0.95) #Konfidenzintervall
+
+#Regressionsgerade 
+plot(pol_index ~ anzahl_pro, data=polar)+abline(lm(pol_index ~ anzahl_pro, data=polar))
+
+```
