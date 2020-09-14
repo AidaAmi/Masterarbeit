@@ -101,7 +101,7 @@ confint(m1,level = 0.95) #Konfidenzintervall
 ```
 #Hypothese 2
 
-H2:Je mehr politische Beiträge auf Instagram gepostet werden, desto polarisierter sind die Diskussionen unter dem Beitrag.
+H2:Je mehr politische Beiträge auf Instagram gepostet werden, desto polarisierter sind die Diskussionen in den Kommentaren unter dem Beitrag.
 
 Um den Zusammenhang zwischen der Anzahl der politischen Beiträge (UV="anzahl_pro") und der Polarisierung in den Kommentaren (AV="pol_index")zu ermitteln, wird im Folgenden eine lineare Regression durchgeführt. Dafür wurde im Vorfeld mithilfe von Excel-Funktionen der Polariserungsindex ermittelt und der prozentuale Anteil der Beiträge errechnet. 
 
